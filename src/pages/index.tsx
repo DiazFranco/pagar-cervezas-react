@@ -13,7 +13,6 @@ const Home = () => {
   const [modalData, setModalData] = useState<{ name: string; quantity: number }[]>([]);
   const [showToast, setShowToast] = useState(false);
 
-
   useEffect(() => {
     const fetchOrderData = async () => {
       try {
@@ -23,8 +22,12 @@ const Home = () => {
         }
         const data = await response.json();
         setStock(data);
-      } catch (err) {
-        setError(err.message);
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError('Ocurrió un error inesperado');
+        }
       } finally {
         setLoading(false);
       }
