@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { TransactionTable } from '../components/TransactionTable/TransactionTable';
 import { Navbar } from '@/components/Navbar/Navbar';
 import { Modal } from '@/components/Modal/Modal';
+import { Toast } from '@/components/Toast/Toast';
 
 const Home = () => {
   const [stock, setStock] = useState<any>([]);
@@ -10,6 +11,8 @@ const Home = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedItems, setSelectedItems] = useState<{ [key: string]: number }>({});
   const [modalData, setModalData] = useState<{ name: string; quantity: number }[]>([]);
+  const [showToast, setShowToast] = useState(false);
+
 
   useEffect(() => {
     const fetchOrderData = async () => {
@@ -79,7 +82,11 @@ const Home = () => {
           throw new Error('Error al crear la orden');
         }
 
-        await response.json();
+        const resp = await response.json();
+        if (resp) setShowToast(true); 
+        setTimeout(() => {
+          setShowToast(false);
+        }, 3000);
         window.location.reload();
       } catch (error) {
         console.error('Error al crear la orden:', error);
@@ -103,7 +110,7 @@ const Home = () => {
           Crear Orden
         </button>
       </div>
-
+      {showToast && <Toast />}
       <Modal
         isOpen={isOpen}
         data={modalData}
